@@ -1873,6 +1873,11 @@
                 justify-content: center;
             }
 
+            .app-visual {
+                height: 340px;
+                margin-top: 0;
+            }
+
             /* Bento Grid Responsiveness */
             .features-bento-grid {
                 grid-template-columns: 1fr;
