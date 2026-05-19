@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashcycle | Peer-to-Peer Fashion Rental Platform</title>
+    <meta name="description"
+        content="Rent designer pieces from real people. Earn from clothes you're not wearing. Join the circular fashion revolution with Fashcycle.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- SCROLL PROGRESS BAR -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="myProgressBar"></div>
+    </div>
+
+    <!-- 1. STICKY NAVIGATION BAR -->
+    <header id="header">
+        <div class="container nav-container">
+            <div class="logo">Fashcycle</div>
+            <nav class="nav-links">
+                <a href="#browse">Browse</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#list">List Your Wardrobe</a>
+                <a href="#impact">Sustainability</a>
+                <a href="#community">Community</a>
+                <a href="#app" style="color: var(--brand-green); font-weight: 700; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;">Download App</a>
+            </nav>
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle Button -->
+                <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark Mode">🌙</button>
+
+                <button id="signInNavBtn" onclick="openAuthModal()" class="btn btn-ghost"
+                    style="padding: 10px 24px;">Sign In</button>
+
+                <!-- Logged-in Profile Avatar Dropdown -->
+                <div id="userNavMenu" class="user-profile-menu" style="display: none;">
+                    <div class="profile-avatar" id="avatarCircle" onclick="toggleProfileDropdown()">U</div>
+                    <div class="profile-dropdown" id="profileDropdownMenu">
+                        <div class="profile-dropdown-header">
+                            <span id="dropdownUserName" style="font-weight: 600; display: block;">User Account</span>
+                            <span id="dropdownUserEmail"
+                                style="font-size: 12px; color: var(--text-secondary);">user@email.com</span>
+                        </div>
+                        <button class="dropdown-item" onclick="showRentalsPortal()">My Rentals 👗</button>
+                        <button class="dropdown-item" onclick="firebaseLogout()">Sign Out 🚪</button>
+                    </div>
+                </div>
+
+                <a href="#browse" class="btn btn-primary" style="padding: 10px 24px;">Start Renting</a>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. HERO SECTION -->
+    <section class="hero container">
+        <div class="hero-split">
+            <div class="hero-content">
+                <h1 class="fade-up">Your Wardrobe.<br>Reimagined.</h1>
+                <p class="fade-up" style="transition-delay: 0.2s;">Rent designer pieces from real people. Earn from
+                    clothes you're not wearing. Join the circular fashion revolution.</p>
+                <div class="hero-ctas fade-up" style="transition-delay: 0.4s;">
+                    <a href="#browse" class="btn btn-primary">Browse the Wardrobe</a>
+                    <button onclick="openQuiz()" class="btn btn-ghost">Style Quiz AI ✨</button>
+                </div>
+            </div>
+            <div class="hero-visual fade-up" style="transition-delay: 0.6s;">
+                <!-- Real main image from their S3 -->
+                <img src="https://fashcycle-official-media.s3.amazonaws.com/image/e67c5ee7-653c-428c-af81-8ea752adc26f.webp"
+                    alt="Fashcycle Luxury Bridal Lehenga" class="hero-img-main">
+                <div class="floating-card card-1">
+                    <img src="https://fashcycle-official-media.s3.amazonaws.com/image/391d38cd-3461-4536-bff5-e0ab59f17ed3.webp"
+                        alt="Saree">
+                    <div class="f-card-info">
+                        <h4>Traditional Saree</h4>
+                        <p>Priya K. • ₹75/day</p>
+                        <p>⭐ 5.0</p>
+                    </div>
+                </div>
+                <div class="floating-card card-2">
+                    <img src="https://fashcycle-official-media.s3.amazonaws.com/image/c2aa2ca5-acb6-468a-b1bb-0f447c96baf0.webp"
+                        alt="Gown">
+                    <div class="f-card-info">
+                        <h4>Designer Gown</h4>
+                        <p>Rahul S. • ₹89/day</p>
+                        <p>⭐ 4.9</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- 3. SOCIAL PROOF BAR -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">★ 4.9 App Rating</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">50,000+ Items Listed</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">Trusted by 100,000+ Members</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">Featured in Vogue, Elle, Forbes</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">Same-Day Delivery in Select Cities</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">100% Verified Users</div>
+
+            <!-- Duplicate for infinite loop -->
+            <div class="ticker-item">★ 4.9 App Rating</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">50,000+ Items Listed</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">Trusted by 100,000+ Members</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">Featured in Vogue, Elle, Forbes</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">Same-Day Delivery in Select Cities</div>
+            <div class="ticker-item">·</div>
+            <div class="ticker-item">100% Verified Users</div>
+        </div>
+    </div>
+
+    <!-- 4. HOW IT WORKS -->
+    <section id="how-it-works" class="how-it-works container">
+        <h2 class="section-title fade-up">Simple. Smart. Sustainable.</h2>
+        <div class="tab-toggle fade-up">
+            <button class="tab-btn active" onclick="switchTab('renters')">For Renters</button>
+            <button class="tab-btn" onclick="switchTab('lenders')">For Lenders</button>
+        </div>
+
+        <div id="flow-renters" class="steps-grid">
+            <div class="step-card fade-up">
+                <div class="step-num">1</div>
+                <h3>Discover & Browse</h3>
+                <p>Search thousands of occasion-wear pieces by size, style, brand, date, and location. Filter by event
+                    type.</p>
+            </div>
+            <div class="step-card fade-up" style="transition-delay: 0.2s;">
+                <div class="step-num">2</div>
+                <h3>Book & Receive</h3>
+                <p>Choose your rental dates. We coordinate doorstep pickup and hygienic delivery straight to you. Track
+                    in real time.</p>
+            </div>
+            <div class="step-card fade-up" style="transition-delay: 0.4s;">
+                <div class="step-num">3</div>
+                <h3>Wear & Return</h3>
+                <p>Shine at your event. Return with our prepaid label. We handle the dry cleaning.</p>
+            </div>
+        </div>
+
+        <div id="flow-lenders" class="steps-grid" style="display: none;">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>List Your Pieces</h3>
+                <p>Upload photos, set your price, and describe your item. It takes less than 3 minutes to list.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Get Booked</h3>
+                <p>Accept rental requests from verified members. We provide the prepaid shipping label.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Earn Seamlessly</h3>
+                <p>Get paid securely directly to your bank account once the rental is complete.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. FEATURED LISTINGS GRID -->
+    <section id="browse" class="listings">
+        <div class="container">
+            <h2 class="section-title fade-up">What's in the Wardrobe Today</h2>
+
+            <div class="filters fade-up">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="lehengas">Lehengas</button>
+                <button class="filter-btn" data-filter="sarees">Sarees</button>
+                <button class="filter-btn" data-filter="gowns">Gowns</button>
+                <button class="filter-btn" data-filter="anarkalis">Anarkalis</button>
+                <button class="filter-btn" data-filter="indo-western">Indo-Western</button>
+            </div>
+
+            <div class="masonry-grid" id="productGrid">
+                <!-- Item 1 - Lehenga -->
+                <div class="product-card fade-up" data-category="lehengas">
+                    <div class="product-img-wrap">
+                        <span class="brand-badge">Premium Lehenga</span>
+                        <button class="wishlist-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="#1C1917" stroke-width="2">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg></button>
+                        <img src="https://fashcycle-official-media.s3.amazonaws.com/image/e67c5ee7-653c-428c-af81-8ea752adc26f.webp"
+                            alt="Lehenga" class="product-img">
+                        <div class="rent-hover-btn"><button
+                                onclick="openCheckout('Luxury Bridal Lehenga','₹75/day','https://fashcycle-official-media.s3.amazonaws.com/image/e67c5ee7-653c-428c-af81-8ea752adc26f.webp')"
+                                class="btn btn-primary" style="width: 100%; padding: 10px;">Rent Now</button></div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Luxury Bridal Lehenga</div>
+                        <div class="product-lender">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                                alt="Priya" style="width:20px;height:20px;border-radius:50%;">
+                            Priya K. • ⭐ 5.0
+                        </div>
+                        <div class="product-price">
+                            <span class="price-retail">₹45,000 retail</span>
+                            <span class="price-rent">₹75/day</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 - Saree -->
+                <div class="product-card fade-up" data-category="sarees" style="transition-delay: 0.1s;">
+                    <div class="product-img-wrap">
+                        <span class="brand-badge">Banarasi Saree</span>
+                        <button class="wishlist-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="#1C1917" stroke-width="2">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg></button>
+                        <img src="https://fashcycle-official-media.s3.amazonaws.com/image/391d38cd-3461-4536-bff5-e0ab59f17ed3.webp"
+                            alt="Saree" class="product-img">
+                        <div class="rent-hover-btn"><button
+                                onclick="openCheckout('Silk Banarasi Weave','₹45/day','https://fashcycle-official-media.s3.amazonaws.com/image/391d38cd-3461-4536-bff5-e0ab59f17ed3.webp')"
+                                class="btn btn-primary" style="width: 100%; padding: 10px;">Rent Now</button></div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Silk Banarasi Weave</div>
+                        <div class="product-lender">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                                alt="Rahul" style="width:20px;height:20px;border-radius:50%;">
+                            Rahul S. • ⭐ 4.9
+                        </div>
+                        <div class="product-price">
+                            <span class="price-retail">₹22,000 retail</span>
+                            <span class="price-rent">₹45/day</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 - Gown -->
+                <div class="product-card fade-up" data-category="gowns" style="transition-delay: 0.2s;">
+                    <div class="product-img-wrap">
+                        <span class="brand-badge">Premium Gown</span>
+                        <button class="wishlist-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="#1C1917" stroke-width="2">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg></button>
+                        <img src="https://fashcycle-official-media.s3.amazonaws.com/image/c2aa2ca5-acb6-468a-b1bb-0f447c96baf0.webp"
+                            alt="Gown" class="product-img">
+                        <div class="rent-hover-btn"><button
+                                onclick="openCheckout('Emerald Silk Gown','₹89/day','https://fashcycle-official-media.s3.amazonaws.com/image/c2aa2ca5-acb6-468a-b1bb-0f447c96baf0.webp')"
+                                class="btn btn-primary" style="width: 100%; padding: 10px;">Rent Now</button></div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Emerald Silk Gown</div>
+                        <div class="product-lender">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                                alt="Ananya" style="width:20px;height:20px;border-radius:50%;">
+                            Ananya M. • ⭐ 4.9
+                        </div>
+                        <div class="product-price">
+                            <span class="price-retail">₹35,000 retail</span>
+                            <span class="price-rent">₹89/day</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 4 - Anarkali -->
+                <div class="product-card fade-up" data-category="anarkalis" style="transition-delay: 0.3s;">
+                    <div class="product-img-wrap">
+                        <span class="brand-badge">Anarkali Suit</span>
+                        <button class="wishlist-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="#1C1917" stroke-width="2">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg></button>
+                        <img src="https://fashcycle-official-media.s3.amazonaws.com/image/8018e31e-e8bf-4992-bae9-1ac3a4b78ffb.webp"
+                            alt="Anarkali" class="product-img">
+                        <div class="rent-hover-btn"><button
+                                onclick="openCheckout('Embellished Anarkali Suit','₹35/day','https://fashcycle-official-media.s3.amazonaws.com/image/8018e31e-e8bf-4992-bae9-1ac3a4b78ffb.webp')"
+                                class="btn btn-primary" style="width: 100%; padding: 10px;">Rent Now</button></div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Embellished Anarkali Suit</div>
+                        <div class="product-lender">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                                alt="Priya" style="width:20px;height:20px;border-radius:50%;">
+                            Priya K. • ⭐ 5.0
+                        </div>
+                        <div class="product-price">
+                            <span class="price-retail">₹18,000 retail</span>
+                            <span class="price-rent">₹35/day</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-all-wrap fade-up">
+                <a href="#" class="btn btn-ghost">View All 50,000+ Items →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. SAAS PLATFORM FOR STORES -->
+    <section id="list" class="saas-section">
+        <div class="container saas-grid">
+            <div class="fade-up">
+                <h2 class="saas-heading" style="color:#ffffff;">Own a Rental Store? Go Digital. <span style="color:#FBBF24;">Free Trial for 1-Year.</span></h2>
+                <p class="saas-subtitle">Join Fashcycle's SaaS platform — The Rent Manager — and put your inventory online. Manage bookings, track availability, reach thousands.</p>
+                
+                <div class="saas-features">
+                    <div class="saas-feature-item">
+                        <div class="saas-feature-icon-wrap">📦</div>
+                        <div class="saas-feature-content">
+                            <h3>Smart Inventory Management</h3>
+                            <p>Track all your outfits in one place.</p>
+                        </div>
+                    </div>
+                    <div class="saas-feature-item">
+                        <div class="saas-feature-icon-wrap">💬</div>
+                        <div class="saas-feature-content">
+                            <h3>WhatsApp Notifications</h3>
+                            <p>Get all booking & return notifications on your WhatsApp.</p>
+                        </div>
+                    </div>
+                    <div class="saas-feature-item">
+                        <div class="saas-feature-icon-wrap">📅</div>
+                        <div class="saas-feature-content">
+                            <h3>Real-time Booking Calendar</h3>
+                            <p>Never double-book an outfit again.</p>
+                        </div>
+                    </div>
+                    <div class="saas-feature-item">
+                        <div class="saas-feature-icon-wrap">📊</div>
+                        <div class="saas-feature-content">
+                            <h3>Business Analytics Dashboard</h3>
+                            <p>Understand your top performing inventory.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="openListStoreModal()" style="background:#ffffff; color:#1B3226; font-weight:700; border-radius:12px; padding:16px 36px; border:none; cursor:pointer; font-size:15px; box-shadow:0 4px 14px rgba(0,0,0,0.15);">LIST YOUR STORE →</button>
+            </div>
+
+            <!-- Dashboard Carousel -->
+            <div class="saas-carousel-container fade-up" style="transition-delay: 0.2s;">
+                <button class="saas-carousel-arrow prev" onclick="moveSaasCarousel(-1)">❮</button>
+                <button class="saas-carousel-arrow next" onclick="moveSaasCarousel(1)">❯</button>
+                
+                <div class="saas-carousel-track-wrapper">
+                    <div class="saas-carousel-track" id="saasCarouselTrack">
+                        <!-- Slide 1: Smart Inventory -->
+                        <div class="saas-carousel-slide">
+                            <div class="mockup-card">
+                                <div class="mockup-header">
+                                    <div class="mockup-dot-group">
+                                        <div class="mockup-dot"></div>
+                                        <div class="mockup-dot"></div>
+                                        <div class="mockup-dot"></div>
+                                    </div>
+                                    <span style="font-size:12px; opacity:0.7; font-family:var(--font-mono); color:#ffffff;">Inventory Manager</span>
+                                </div>
+                                <div class="mockup-body">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                        <span style="font-weight:700; font-size:14px; color:#ffffff;">Total Items (42)</span>
+                                        <span style="background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;">+ Add Item</span>
+                                    </div>
+                                    <div class="mockup-table-row">
+                                        <span>Luxury Bridal Lehenga</span>
+                                        <span style="background:#065F46; color:#A7F3D0; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">Available</span>
+                                    </div>
+                                    <div class="mockup-table-row" style="border-left-color:#F59E0B; margin-top:6px;">
+                                        <span>Silk Banarasi Saree</span>
+                                        <span style="background:#78350F; color:#FDE68A; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">Rented</span>
+                                    </div>
+                                    <div class="mockup-table-row" style="margin-top:6px;">
+                                        <span>Emerald Gown</span>
+                                        <span style="background:#065F46; color:#A7F3D0; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: WhatsApp Notifications -->
+                        <div class="saas-carousel-slide">
+                            <div class="mockup-card" style="background:#0b1e14;">
+                                <div class="mockup-header">
+                                    <div class="mockup-dot-group">
+                                        <div class="mockup-dot"></div>
+                                        <div class="mockup-dot"></div>
+                                        <div class="mockup-dot"></div>
+                                    </div>
+                                    <span style="font-size:12px; opacity:0.7; font-family:var(--font-mono); color:#ffffff;">WhatsApp Integration</span>
+                                </div>
+                                <div class="mockup-body" style="justify-content:center; gap:8px;">
+                                    <div class="wa-bubble-mock">
+                                        <div style="font-weight:700; font-size:11px; color:#25D366; margin-bottom:4px;">Fashcycle Bot</div>
+                                        🚨 <strong>New Booking Alert!</strong><br>
+                                        Rahul S. has booked your <em>Silk Banarasi Saree</em> for <strong>May 20-24</strong>.<br>
+                                        <span style="font-size:10px; opacity:0.6; display:block; text-align:right; margin-top:4px;">12:35 PM</span>
+                                    </div>
+                                    <div class="wa-bubble-mock" style="align-self: flex-end; background:#128C7E; border-bottom-left-radius:12px; border-bottom-right-radius:2px;">
+                                        Confirm Booking & Arrange Courier ✅
+                                        <span style="font-size:10px; opacity:0.6; display:block; text-align:right; margin-top:4px;">12:36 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3: Analytics Dashboard -->
+                        <div class="saas-carousel-slide">
+                            <div class="mockup-card">
+                                <div class="mockup-header">
+                                    <div class="mockup-dot-group">
+                                        <div class="mockup-dot"></div>
+                                        <div class="mockup-dot"></div>
+                                        <div class="mockup-dot"></div>
+                                    </div>
+                                    <span style="font-size:12px; opacity:0.7; font-family:var(--font-mono); color:#ffffff;">Monthly Analytics</span>
+                                </div>
+                                <div class="mockup-body">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                        <div>
+                                            <span style="font-size:11px; opacity:0.6;">Monthly Revenue</span>
+                                            <div style="font-size:18px; font-weight:700; color:#10B981;">₹42,800</div>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <span style="font-size:11px; opacity:0.6;">Active Rentals</span>
+                                            <div style="font-size:18px; font-weight:700;">14</div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar-wrap">
+                                        <div class="chart-bar" style="height: 40px;" data-val="Mar"></div>
+                                        <div class="chart-bar" style="height: 75px;" data-val="Apr"></div>
+                                        <div class="chart-bar" style="height: 105px;" data-val="May"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="saas-carousel-dots" id="saasCarouselDots">
+                    <span class="saas-carousel-dot active" onclick="setSaasSlide(0)"></span>
+                    <span class="saas-carousel-dot" onclick="setSaasSlide(1)"></span>
+                    <span class="saas-carousel-dot" onclick="setSaasSlide(2)"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. PLATFORM FEATURES -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title fade-up">Why Fashcycle?</h2>
+            <div class="features-bento-grid fade-up">
+
+                <!-- Card 1: Secure Payments -->
+                <div class="feature-bento-card bento-large">
+                    <div class="feature-bento-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80"
+                            alt="Fashion Shopping">
+                    </div>
+                    <div class="feature-bento-content">
+                        <div class="feature-bento-icon">🔒</div>
+                        <h3>Secure Payments</h3>
+                        <p>Every transaction is encrypted. Funds held in escrow until delivery confirmed. Damage
+                            deposits auto-managed.</p>
+                        <div class="feature-tag">Bank-Grade Security</div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Hygienic Guarantee -->
+                <div class="feature-bento-card">
+                    <div class="feature-bento-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=600&q=80"
+                            alt="Clean Garments">
+                    </div>
+                    <div class="feature-bento-content">
+                        <div class="feature-bento-icon">✨</div>
+                        <h3>Hygienic Guarantee</h3>
+                        <p>Every garment is professionally dry-cleaned and sanitized before each rental. We verify every
+                            cleaning.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Real-Time Tracking -->
+                <div class="feature-bento-card">
+                    <div class="feature-bento-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=600&q=80"
+                            alt="Delivery Tracking">
+                    </div>
+                    <div class="feature-bento-content">
+                        <div class="feature-bento-icon">📍</div>
+                        <h3>Real-Time Tracking</h3>
+                        <p>Know exactly where your rental is — from courier's hands to your doorstep. Live map updates.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Verified Community -->
+                <div class="feature-bento-card bento-wide">
+                    <div class="feature-bento-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80"
+                            alt="Community">
+                    </div>
+                    <div class="feature-bento-content">
+                        <div class="feature-bento-icon">✅</div>
+                        <h3>Verified Community</h3>
+                        <p>Every lender and renter is ID-verified. Ratings and reviews build trust. Disputes resolved
+                            within 24 hours.</p>
+                        <div class="feature-tag">10,000+ Trusted Members</div>
+                    </div>
+                </div>
+
+                <!-- Card 5: AI Styling -->
+                <div class="feature-bento-card bento-accent">
+                    <div class="feature-bento-content" style="padding: 40px;">
+                        <div class="feature-bento-icon" style="font-size: 48px;">🤖</div>
+                        <h3 style="font-size: 28px;">AI-Powered Style Match</h3>
+                        <p>Our AI finds the perfect outfit for your occasion, size, and vibe — in seconds.</p>
+                        <a href="#" class="btn" style="background: white; color: var(--brand-green); margin-top: 24px;"
+                            onclick="openQuiz()">Try Style Quiz →</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. SUSTAINABILITY IMPACT COUNTER -->
+    <section id="impact" class="impact">
+        <div class="container">
+            <h2 class="section-title fade-up">Our Planet. Our Impact.</h2>
+            <div class="stats-grid fade-up" id="counter-section">
+                <div class="stat-item">
+                    <div class="stat-icon">🌿</div>
+                    <h4><span class="counter" data-target="1000000">0</span>+</h4>
+                    <p>kg CO₂ Saved</p>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">👗</div>
+                    <h4><span class="counter" data-target="500000">0</span>+</h4>
+                    <p>Rentals Completed</p>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">💧</div>
+                    <h4><span class="counter" data-target="2500000">0</span>+</h4>
+                    <p>Litres Water Saved</p>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">💰</div>
+                    <h4>₹<span class="counter" data-target="80000000">0</span>+</h4>
+                    <p>Earned by Community</p>
+                </div>
+            </div>
+            <p class="impact-tagline fade-up">Every time you rent instead of buy, you save 23x the carbon of producing a
+                new garment.</p>
+            <a href="https://www.fashcycle.com/sustainability" class="btn fade-up impact-btn">See Our Sustainability
+                Report →</a>
+        </div>
+    </section>
+
+    <!-- 9. COMMUNITY / TESTIMONIALS -->
+    <section id="community" class="testimonials">
+        <div class="container">
+            <h2 class="section-title fade-up">From Our Community</h2>
+            <div class="test-grid">
+                <div class="test-card fade-up">
+                    <div class="test-header">
+                        <!-- Real Reviewer avatar loaded from unsplash -->
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Priya" class="test-avatar">
+                        <div class="test-info">
+                            <h5>Priya K., Mumbai</h5>
+                            <p>Renter • Member since 2022</p>
+                        </div>
+                    </div>
+                    <p class="test-quote">"I rented a beautiful bridal Lehenga for my cousin's wedding. Got more
+                        compliments than the bride. Highly recommend Fashcycle!"</p>
+                    <div style="color: var(--gold-accent);">⭐⭐⭐⭐⭐</div>
+                </div>
+
+                <div class="test-card fade-up" style="transition-delay: 0.2s;">
+                    <div class="test-header">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Rahul" class="test-avatar">
+                        <div class="test-info">
+                            <h5>Rahul S., Indore</h5>
+                            <p>Lender • Member since 2023</p>
+                        </div>
+                    </div>
+                    <p class="test-quote">"I've made ₹12,000 this month just from traditional suits I wore only once.
+                        This is amazing passive income."</p>
+                    <div style="color: var(--gold-accent);">⭐⭐⭐⭐⭐</div>
+                </div>
+
+                <div class="test-card fade-up" style="transition-delay: 0.4s;">
+                    <div class="test-header">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                            alt="Ananya" class="test-avatar">
+                        <div class="test-info">
+                            <h5>Ananya M., Delhi</h5>
+                            <p>Both • Member since 2024</p>
+                        </div>
+                    </div>
+                    <p class="test-quote">"Designer ethnic wear used to feel way out of reach. Fashcycle made premium
+                        fashion part of my everyday life."</p>
+                    <div style="color: var(--gold-accent);">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. APP DOWNLOAD SECTION -->
+    <section id="app" class="app-section container">
+        <div class="app-container fade-up">
+            <div class="app-content">
+                <h2>Fashion in Your Pocket</h2>
+                <p style="font-size: var(--fs-body-lg); margin-bottom: 24px;">Browse, book, track, and manage your
+                    wardrobe — all from the Fashcycle app.</p>
+                <p style="font-family: var(--font-mono); font-size: var(--fs-small);">⭐ 4.9 Rating · 100K+ Downloads ·
+                    Available on iOS & Android</p>
+
+                <div class="store-btns">
+                    <a href="https://apps.apple.com/in/app/fashcycle/id6748541060" target="_blank"
+                        rel="noopener noreferrer" class="store-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.19 2.31-.88 3.5-.8 1.49.07 2.65.65 3.32 1.6-2.9 1.63-2.3 5.48.65 6.78-.71 1.76-1.58 3.56-2.55 4.59zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                        </svg>
+                        App Store
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=com.fashcycle&hl=en_IN" target="_blank"
+                        rel="noopener noreferrer" class="store-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.31 0 .61.1.86.28l14.59 10.5c.67.48.82 1.41.34 2.08-.15.2-.35.37-.58.48L5.12 21.6c-.75.36-1.63.04-1.99-.71-.08-.18-.13-.38-.13-.59v.2z" />
+                        </svg>
+                        Google Play
+                    </a>
+                </div>
+            </div>
+            <div class="app-visual">
+                <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=400&q=80"
+                    alt="App Mockup" class="app-mockup" style="border-radius: 24px; border: 8px solid #1B3226;">
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. TRUSTED PARTNERS -->
+    <section class="press container" style="padding-top: 60px; padding-bottom: 60px; text-align: center;">
+        <h2 class="section-title fade-up" style="font-size: 32px; font-family: var(--font-heading); margin-bottom: 8px;">Our Trusted Partners</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 16px; max-width: 600px; margin-left: auto; margin-right: auto;" class="fade-up">
+            Fashcycle works with local rental stores across Indore and beyond.
+        </p>
+        <div class="partners-grid fade-up" style="display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <!-- Partner 1: Wardrobe -->
+            <div style="background: var(--white); border: 1px solid var(--border); border-radius: 16px; width: 200px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-card); padding: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-card)'">
+                <svg width="40" height="24" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 15 C52 10, 48 5, 45 8 C42 11, 47 16, 50 18 L15 42 L85 42 Z" stroke="var(--text-primary)" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <div style="font-family: var(--font-mono); font-weight: 700; font-size: 13px; color: var(--text-primary); letter-spacing: 1px; margin-top: 4px; border-bottom: 1px solid var(--text-primary); padding-bottom: 2px;">WARDROBE</div>
+                <div style="font-size: 8px; font-weight: 800; color: #EF4444; letter-spacing: 1.5px; margin-top: 3px; text-transform: uppercase;">Peer To Peer</div>
+            </div>
+
+            <!-- Partner 2: Anshi Bridal Studio -->
+            <div style="background: var(--white); border: 1px solid var(--border); border-radius: 16px; width: 200px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-card); padding: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-card)'">
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: #B89742; line-height: 1; font-style: italic;">Anshi's</div>
+                <div style="font-size: 8px; font-weight: 700; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px;">Bridal Studio</div>
+            </div>
+
+            <!-- Partner 3: Vardhan Bridal Groom Hub -->
+            <div style="background: var(--white); border: 1px solid var(--border); border-radius: 16px; width: 200px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-card); padding: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-card)'">
+                <div style="border: 2px solid var(--text-primary); padding: 4px 8px; text-align: center;">
+                    <div style="font-size: 7px; font-weight: 800; color: var(--text-primary); letter-spacing: 1px; text-transform: uppercase;">Vardhan</div>
+                    <div style="font-family: var(--font-heading); font-size: 11px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.5px; text-transform: uppercase; margin: 1px 0;">Bridal Groom</div>
+                    <div style="font-size: 8px; font-weight: 800; color: var(--text-primary); letter-spacing: 2px; text-transform: uppercase; border-top: 1px solid var(--text-primary); padding-top: 1px;">Hub</div>
+                </div>
+            </div>
+
+            <!-- Partner 4: Pink Pearl -->
+            <div style="background: var(--white); border: 1px solid var(--border); border-radius: 16px; width: 200px; height: 110px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-card); padding: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-card)'">
+                <div style="background: #E52A7B; color: #FFFFFF; display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 8px; width: 100%; height: 100%; justify-content: center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 15.43 3.73 18.45 6.35 20.25C6.75 18.15 8.7 16.5 11.25 16.5H12.75C15.3 16.5 17.25 18.15 17.65 20.25C20.27 18.45 22 15.43 22 12C22 6.48 17.52 2 12 2Z" opacity="0.3"/>
+                        <circle cx="12" cy="10" r="4" fill="#FFFFFF"/>
+                        <path d="M12 15C9.33 15 4 16.33 4 19V20C4 20.55 4.45 21 5 21H19C19.55 21 20 20.55 20 20V19C20 16.33 14.67 15 12 15Z"/>
+                    </svg>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-family: var(--font-body); font-size: 15px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; text-transform: uppercase;">Pink</span>
+                        <span style="font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.9;">Pearl</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. NEWSLETTER -->
+    <section class="newsletter container">
+        <h2 class="section-title fade-up" style="margin-bottom: 16px;">Be First to the Wardrobe</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: var(--fs-body-lg);" class="fade-up">Get
+            early access to new listings, exclusive lender perks, and style drops.</p>
+
+        <form class="news-form fade-up" onsubmit="event.preventDefault(); handleSubscribe();">
+            <input type="email" id="subscriberEmail" placeholder="Email address" class="news-input" required>
+            <button type="submit" class="btn btn-primary">Join the Community</button>
+        </form>
+        <p class="news-msg fade-up">No spam. Unsubscribe anytime. Join 40,000+ fashion-forward members.</p>
+    </section>
+
+    <!-- 13. FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="margin-bottom: 16px;">Fashcycle</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">The Circular Fashion Community.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/fashcycle.official" target="_blank">IG</a>
+                        <a href="https://x.com/fashcycle19878" target="_blank">X</a>
+                        <a href="https://www.facebook.com/profile.php?id=61577640128490" target="_blank">FB</a>
+                        <a href="https://www.youtube.com/@fashcycle" target="_blank">YT</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#browse">Browse</a></li>
+                        <li><a href="#list">List Items</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Gift Cards</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="https://www.fashcycle.com/about-us">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="https://www.fashcycle.com/sustainability">Sustainability</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="mailto:support@fashcycle.com">Contact Support</a></li>
+                        <li><a href="#">Damage Policy</a></li>
+                        <li><a href="#">Trust & Safety</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>© 2026 Fashcycle · <a href="https://www.fashcycle.com/privacy">Privacy Policy</a> · <a
+                        href="https://www.fashcycle.com/terms">Terms of Service</a> · <a
+                        href="https://www.fashcycle.com/cookies">Cookie Settings</a></div>
+                <div class="footer-certs">
+                    <span>🌿 Carbon Neutral Shipping</span>
+                    <span>🔒 SSL Secured</span>
+                    <span>✓ ID Verified</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOBILE BOTTOM STICKY CTA -->
+    <div class="mobile-sticky-cta">
+        <a href="#browse" class="btn btn-primary">Browse 50K Items</a>
+    </div>
+
+    <!-- FLOATING WHATSAPP CHAT -->
+    <a href="https://wa.me/918085676103" class="whatsapp-bubble" target="_blank" rel="noopener noreferrer"
+        aria-label="Chat with Fashcycle support on WhatsApp">
+        💬
+    </a>
+
+    <!-- COOKIE CONSENT BANNER -->
+    <div class="cookie-banner" id="cookieBanner">
+        <h4 style="margin-bottom: 8px;">Cookie Consent 🍪</h4>
+        <p style="font-size: var(--fs-small); color: var(--text-secondary); margin-bottom: 16px;">We use cookies to
+            personalize your experience and optimize our fashion recommendations. By continuing, you agree to our
+            policies.</p>
+        <div style="display: flex; gap: 8px;">
+            <button onclick="acceptCookies()" class="btn btn-primary"
+                style="padding: 8px 16px; font-size: var(--fs-small);">Accept</button>
+            <button onclick="dismissCookies()" class="btn btn-ghost"
+                style="padding: 8px 16px; font-size: var(--fs-small);">Decline</button>
+        </div>
+    </div>
+
+    <!-- STYLE QUIZ MODAL -->
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-content">
+            <button class="close-modal-btn" onclick="closeQuiz()">&times;</button>
+
+            <!-- Step 1 -->
+            <div class="quiz-step active" id="q-step-1">
+                <h3 style="font-family: var(--font-heading); font-size: var(--fs-card); margin-bottom: 8px;">Step 1:
+                    Choose Your Occasion</h3>
+                <p style="color: var(--text-secondary);">What kind of event are you preparing for?</p>
+                <div class="quiz-options">
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(2, 'Wedding')">💍 Wedding / Bridal</button>
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(2, 'Festive')">✨ Festive / Ethnic
+                        Celebration</button>
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(2, 'Cocktail')">🍸 Cocktail Party / Gala</button>
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(2, 'Casual')">🧣 Casual / Streetwear</button>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="quiz-step" id="q-step-2">
+                <h3 style="font-family: var(--font-heading); font-size: var(--fs-card); margin-bottom: 8px;">Step 2:
+                    Choose Your Vibe</h3>
+                <p style="color: var(--text-secondary);">Which stylistic voice matches you today?</p>
+                <div class="quiz-options">
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(3, 'Traditional')">📿 Classic &
+                        Traditional</button>
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(3, 'Modern')">⚡ Bold & Modern</button>
+                    <button class="quiz-opt-btn" onclick="nextQuizStep(3, 'Minimalist')">🦢 Elegant &
+                        Minimalist</button>
+                </div>
+            </div>
+
+            <!-- Step 3 (Results) -->
+            <div class="quiz-step" id="q-step-3">
+                <h3 style="font-family: var(--font-heading); font-size: var(--fs-card); margin-bottom: 8px;">Your Match
+                    is Ready! ✨</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">Based on your choices, we recommend:</p>
+                <div id="quizResultArea"
+                    style="display: flex; gap: 16px; align-items: center; background: var(--secondary-bg); padding: 12px; border-radius: var(--radius-card);">
+                    <!-- Dynamic suggestion here -->
+                </div>
+                <button class="btn btn-primary" onclick="closeQuiz()" style="width: 100%; margin-top: 16px;">Browse
+                    Similar Styles</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/ui.js"></script>
+
+    <!-- ====== AUTH MODAL ====== -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <button class="close-modal-btn" onclick="closeAuthModal()"
+                style="position:absolute;top:20px;right:20px;">✕</button>
+            <div style="margin-bottom:24px;">
+                <h2 style="font-family:var(--font-heading);font-size:32px;letter-spacing:-1px;margin-bottom:6px;">
+                    Welcome to Fashcycle</h2>
+                <p style="color:var(--text-secondary);font-size:14px;">Sign in or create an account to start renting and
+                    earning.</p>
+            </div>
+
+            <!-- Google Sign-In -->
+            <button id="googleSignInBtn" onclick="signInWithGoogle()"
+                style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 20px;border:1px solid var(--border);border-radius:var(--radius-input);background:var(--white);color:var(--text-primary);font-weight:600;font-size:15px;cursor:pointer;margin-bottom:20px;transition:all 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 48 48">
+                    <path fill="#4285F4"
+                        d="M24 9.5c3.14 0 5.95 1.08 8.17 2.85L38.63 6C34.64 2.29 29.6 0 24 0 14.62 0 6.62 5.49 2.96 13.47l7.39 5.73C12.12 13.01 17.6 9.5 24 9.5z" />
+                    <path fill="#34A853"
+                        d="M46.6 24.5c0-1.64-.15-3.22-.42-4.74H24v9.04h12.74c-.55 2.96-2.22 5.47-4.73 7.16l7.27 5.65C43.41 37.47 46.6 31.38 46.6 24.5z" />
+                    <path fill="#FBBC05"
+                        d="M10.35 28.8A14.4 14.4 0 0 1 9.5 24c0-1.67.29-3.28.85-4.8l-7.39-5.73A23.94 23.94 0 0 0 0 24c0 3.87.93 7.52 2.56 10.74l7.79-5.94z" />
+                    <path fill="#EA4335"
+                        d="M24 48c6.48 0 11.93-2.14 15.9-5.83l-7.27-5.65c-2.02 1.35-4.63 2.15-8.63 2.15-6.4 0-11.88-3.51-13.65-8.87l-7.79 5.94C6.62 42.51 14.62 48 24 48z" />
+                </svg>
+                Continue with Google
+            </button>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                <hr style="flex:1;border-color:var(--border);">
+                <span style="font-size:12px;color:var(--text-secondary);">OR</span>
+                <hr style="flex:1;border-color:var(--border);">
+            </div>
+
+            <!-- Tab Toggle -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+                </div>
+                <div id="authError" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none;"></div>
+                <button onclick="signInWithEmail()" class="btn btn-primary" style="width:100%;padding:14px;">Sign In
+                    →</button>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" style="display:none;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" class="form-input" placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" class="form-input" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" class="form-input" placeholder="Min. 6 characters">
+                </div>
+                <div id="signupError" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none;"></div>
+                <button onclick="createAccount()" class="btn btn-primary" style="width:100%;padding:14px;">Create
+                    Account →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== CHECKOUT MODAL ====== -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-content">
+            <button class="close-modal-btn" onclick="closeCheckout()"
+                style="position:absolute;top:20px;right:20px;">✕</button>
+            <h2 style="font-family:var(--font-heading);font-size:28px;letter-spacing:-1px;margin-bottom:20px;">Rent This
+                Item</h2>
+
+            <div id="checkoutItem"
+                style="display:flex;gap:16px;align-items:center;background:var(--secondary-bg);padding:16px;border-radius:16px;margin-bottom:24px;">
+                <img id="checkoutImg" src="" alt=""
+                    style="width:80px;height:100px;object-fit:cover;border-radius:12px;">
+                <div>
+                    <h4 id="checkoutName" style="font-size:18px;font-weight:700;margin-bottom:4px;"></h4>
+                    <span id="checkoutPrice" style="color:var(--brand-green);font-weight:600;font-size:16px;"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Rental Start Date</label>
+                <input type="date" id="rentalStart" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Rental End Date</label>
+                <input type="date" id="rentalEnd" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <div style="position:relative;">
+                    <input type="text" id="deliveryAddress" class="form-input"
+                        placeholder="Start typing your address..." autocomplete="off"
+                        oninput="addressAutocomplete(this.value)">
+                    <div id="addressSuggestions"
+                        style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid var(--border);border-radius:12px;z-index:999;box-shadow:var(--shadow-hover);max-height:220px;overflow-y:auto;margin-top:4px;">
+                    </div>
+                </div>
+                <!-- Live Map Preview -->
+                <div id="deliveryMapWrap"
+                    style="display:none;margin-top:12px;border-radius:16px;overflow:hidden;border:1px solid var(--border);">
+                    <div id="deliveryMap" style="height:180px;width:100%;"></div>
+                    <div id="mapAddressLabel"
+                        style="padding:10px 14px;font-size:13px;color:var(--text-secondary);background:var(--secondary-bg);display:flex;align-items:center;gap:8px;">
+                        📍 <span id="mapAddressText"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rentalSummary"
+                style="background:var(--secondary-bg);border-radius:12px;padding:16px;margin-bottom:20px;display:none;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;">
+                    <span>Rental Duration</span><span id="rentalDays" style="font-weight:600;"></span>
+                </div>
+                <div
+                    style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--brand-green);">
+                    <span>Total Cost</span><span id="rentalTotal"></span>
+                </div>
+            </div>
+            <div id="checkoutError" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none;"></div>
+            <button onclick="confirmRental()" class="btn btn-primary" style="width:100%;padding:14px;">Confirm Rental &
+                Book 🎉</button>
+        </div>
+    </div>
+
+    <!-- ====== MY RENTALS PORTAL ====== -->
+    <div class="auth-modal" id="rentalsPortalModal">
+        <div class="auth-content" style="max-width:600px;">
+            <button class="close-modal-btn" onclick="closeRentalsPortal()"
+                style="position:absolute;top:20px;right:20px;">✕</button>
+            <h2 style="font-family:var(--font-heading);font-size:28px;letter-spacing:-1px;margin-bottom:6px;">My Rentals
+                👗</h2>
+            <p id="rentalsPortalSubtitle" style="color:var(--text-secondary);font-size:14px;margin-bottom:24px;">Your
+                active and past bookings</p>
+            <div id="rentalsListContainer">
+                <div style="text-align:center;padding:40px 0;color:var(--text-secondary);">
+                    <div style="font-size:48px;margin-bottom:12px;">🛍️</div>
+                    <p>No rentals yet. Start browsing!</p>
+                    <button onclick="closeRentalsPortal();document.getElementById('browse').scrollIntoView();"
+                        class="btn btn-primary" style="margin-top:16px;">Browse Wardrobe →</button>
+                </div>
+            </div>
+            
+            <!-- Highlighted App Download Promo -->
+            <div style="margin-top:24px; padding:16px; background: rgba(0, 135, 81, 0.05); border-radius:18px; border: 1px solid rgba(0, 135, 81, 0.1); text-align: center;">
+                <p style="font-size: 13px; font-weight: 700; color: var(--brand-green); margin-bottom: 8px;">Want easier tracking & instant alerts? 📱</p>
+                <button onclick="closeRentalsPortal(); document.getElementById('app').scrollIntoView({ behavior: 'smooth' });" class="btn" style="padding:10px 20px; font-size: 12px; font-weight:700; background: var(--brand-green); color:#FFFFFF; border-radius:50px; border:none; cursor:pointer; width: 100%; box-shadow: 0 4px 10px rgba(0, 135, 81, 0.2);">Download Fashcycle App</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== ORDER SUCCESS MODAL ====== -->
+        <div class="success-modal" id="successModal">
+            <div class="success-content" style="position:relative; overflow:hidden; max-width: 400px; padding: 24px; border-radius: 28px;">
+                <canvas id="successConfettiCanvas"
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
+                <div style="z-index:2; position:relative; display: flex; flex-direction: column; align-items: center;">
+                    
+                    <!-- Delivery Scooter Illustration SVG -->
+                    <div style="margin: 15px auto 10px; width: 140px; height: 110px;">
+                        <svg viewBox="0 0 200 160" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background road shadow -->
+                            <ellipse cx="100" cy="140" rx="70" ry="8" fill="#E2E8F0"/>
+                            
+                            <!-- Yellow Scooter Body -->
+                            <path d="M55 130 C55 110, 80 110, 95 120 L135 120 C145 120, 155 105, 150 90 L145 75 C142 68, 148 60, 155 60 C162 60, 168 68, 168 75 L168 120 C168 128, 160 135, 150 135 L55 135 Z" fill="#FBBF24"/>
+                            
+                            <!-- Scooter mudguard & details -->
+                            <path d="M40 135 C35 125, 45 115, 55 118" stroke="#FBBF24" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M162 135 L175 135" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+                            
+                            <!-- Wheels -->
+                            <circle cx="55" cy="132" r="16" fill="#1E293B" stroke="#E2E8F0" stroke-width="3"/>
+                            <circle cx="55" cy="132" r="7" fill="#E2E8F0"/>
+                            <circle cx="150" cy="132" r="16" fill="#1E293B" stroke="#E2E8F0" stroke-width="3"/>
+                            <circle cx="150" cy="132" r="7" fill="#E2E8F0"/>
+                            
+                            <!-- Handlebar & Front Shield -->
+                            <line x1="140" y1="120" x2="135" y2="70" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M130 70 L145 65" stroke="#1E293B" stroke-width="8" stroke-linecap="round"/>
+                            <!-- Headlight -->
+                            <circle cx="143" cy="72" r="6" fill="#FFFBEB" stroke="#FBBF24" stroke-width="2"/>
+                            
+                            <!-- Red Delivery Box -->
+                            <rect x="65" y="75" width="48" height="42" rx="6" fill="#EF4444"/>
+                            <!-- Pizza/Box emblem -->
+                            <circle cx="89" cy="96" r="10" fill="#FBBF24"/>
+                            <path d="M85 96 L93 96 M89 92 L89 100" stroke="#FFF" stroke-width="2"/>
+                            
+                            <!-- Delivery Rider -->
+                            <!-- Legs / Body -->
+                            <path d="M105 125 L115 105 L130 105" stroke="#1E293B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M112 105 C112 85, 125 80, 133 90" stroke="#EF4444" stroke-width="12" stroke-linecap="round"/>
+                            <!-- Arm -->
+                            <path d="M128 92 L138 78" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+                            <!-- Head & Helmet -->
+                            <circle cx="126" cy="67" r="10" fill="#F87171"/> <!-- Helmet -->
+                            <path d="M116 67 C116 57, 136 57, 136 67 Z" fill="#EF4444"/> <!-- Helmet top -->
+                            <rect x="126" y="65" width="10" height="4" fill="#1E293B" rx="1"/> <!-- Visor -->
+                            <circle cx="126" cy="71" r="7" fill="#FDBA74"/> <!-- Face -->
+                        </svg>
+                    </div>
+
+                    <h2 style="font-family:var(--font-heading);font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;color:#111827;">Order Status</h2>
+                    <p style="color:#6B7280;font-size:14px;margin-bottom:20px;font-weight:500;">Your package is on the way</p>
+
+                    <!-- Item Detail Card -->
+                    <div style="background:#F9FAFB;border-radius:18px;padding:12px 16px;text-align:left;margin-bottom:16px;border:1px solid #F3F4F6;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            <img id="successItemImg" src="" style="width:50px;height:50px;object-fit:cover;border-radius:10px;background:#F3F4F6;">
+                            <div>
+                                <div id="successItemName" style="font-weight:700;font-size:14px;color:#111827;">Item Name</div>
+                                <div style="color:#9CA3AF;font-size:12px;margin-top:2px;">Type: Rental Outfit</div>
+                            </div>
+                        </div>
+                        <div id="successItemPrice" style="color:#111827;font-weight:700;font-size:14px;">₹45.00</div>
+                    </div>
+
+                    <!-- Order Summary Card -->
+                    <div style="background:#F9FAFB;border-radius:18px;padding:16px;text-align:left;margin-bottom:20px;border:1px solid #F3F4F6;width:100%;">
+                        <h4 style="font-size:13px;font-weight:700;color:#111827;margin-bottom:12px;text-transform:none;letter-spacing:0;">Order Summary</h4>
+                        <div style="font-size:12px;color:#4B5563;display:grid;gap:8px;">
+                            <div style="display:flex;justify-content:space-between;">
+                                <span>Order ID</span>
+                                <strong id="successOrderId" style="color:#111827;font-weight:600;"></strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;gap:10px;">
+                                <span>Shipping Address</span>
+                                <strong id="successAddress" style="color:#111827;font-weight:600;text-align:right;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;">
+                                <span>Tracking ID</span>
+                                <strong id="successTrackingId" style="color:#111827;font-weight:600;"></strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;">
+                                <span>Estimated Delivery Date</span>
+                                <strong id="successEstDelivery" style="color:#111827;font-weight:600;"></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Web3Forms Email Sending State Indicator -->
+                    <div id="successEmailStatus" style="background:#ECFDF5;color:#065F46;border-radius:14px;padding:8px 12px;font-size:11px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;">
+                        <span class="spinner-mini" style="border:2px solid #047857;border-top:2px solid transparent;border-radius:50%;width:10px;height:10px;display:inline-block;animation:spin 0.8s linear infinite;"></span>
+                        <span id="successEmailStatusText">Emailing order confirmation details...</span>
+                    </div>
+
+                    <!-- Highlighted Download App Button -->
+                    <button onclick="closeSuccessModal(); document.getElementById('app').scrollIntoView({ behavior: 'smooth' });" class="btn" style="width:100%;padding:14px;font-weight:700;background:var(--brand-green);color:#FFFFFF;border-radius:50px;border:none;font-size:15px;cursor:pointer;margin-bottom:10px;box-shadow: 0 4px 14px rgba(0, 135, 81, 0.3); transition:transform 0.1s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Download App</button>
+
+                    <!-- Track Order Button -->
+                    <button onclick="closeSuccessModal()" class="btn" style="width:100%;padding:14px;font-weight:700;background:#111827;color:#FFFFFF;border-radius:50px;border:none;font-size:15px;cursor:pointer;transition:transform 0.1s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Track order</button>
+                    
+                    <div style="color:#10B981;font-size:11px;font-weight:600;margin-top:12px;letter-spacing:0.2px;">Your order is confirmed and in transit</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== LIST YOUR STORE APPLICATION MODAL ====== -->
+        <div class="auth-modal" id="listStoreModal">
+            <div class="auth-content" style="max-width: 650px; padding: 32px; border-radius: 24px; position:relative;">
+                <button class="close-modal-btn" onclick="closeListStoreModal()" style="position:absolute;top:24px;right:24px;">✕</button>
+                <h2 style="font-family:var(--font-heading);font-size:28px;letter-spacing:-1px;margin-bottom:6px;color:#111827;">List Your Store</h2>
+                <p style="color:var(--text-secondary);font-size:14px;margin-bottom:28px;">Tell us about your rental store and products.</p>
+                
+                <form id="listStoreForm" onsubmit="submitStoreApplication(event)">
+                    <div class="form-grid">
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Owner Name</label>
+                            <input type="text" id="storeOwnerName" class="form-input" placeholder="e.g. Priyanshu Sharma" required>
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Store Name</label>
+                            <input type="text" id="storeName" class="form-input" placeholder="e.g. Elite Couture Indore" required>
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Phone Number</label>
+                            <div style="position:relative; display:flex; align-items:center;">
+                                <span style="position:absolute; left:14px; font-weight:600; color:var(--text-secondary); font-size:14px;">+91</span>
+                                <input type="tel" id="storePhone" class="form-input" placeholder="Enter 10-digit mobile" style="padding-left:52px;" maxlength="10" required>
+                            </div>
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Email Address</label>
+                            <input type="email" id="storeEmail" class="form-input" placeholder="name@store.com" required>
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">City</label>
+                            <input type="text" id="storeCity" class="form-input" value="Indore" placeholder="e.g. Indore" required>
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Store Address</label>
+                            <input type="text" id="storeAddress" class="form-input" placeholder="e.g. MG Road, Indore" required>
+                        </div>
+                        <div class="form-group form-grid-full" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Products You Rent (e.g. Lehenga, Gown)</label>
+                            <input type="text" id="storeProducts" class="form-input" placeholder="Lehenga, Sherwani, Designer Gown, Tuxedo..." required>
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Approx. Inventory Size (optional)</label>
+                            <input type="number" id="storeInventorySize" class="form-input" placeholder="e.g. 50">
+                        </div>
+                        <div class="form-group" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Rental Price Range (optional)</label>
+                            <input type="text" id="storePriceRange" class="form-input" placeholder="e.g. ₹2,000 - ₹10,000">
+                        </div>
+                        <div class="form-group form-grid-full" style="text-align:left;">
+                            <label style="color:#374151; font-weight:600; font-size:13px; display:block; margin-bottom:6px;">Anything else you'd like us to know? (optional)</label>
+                            <textarea id="storeAdditionalInfo" class="form-input" style="height:80px; padding:12px; resize:none;" placeholder="Tell us more about your business..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="storeFormError" style="color:#ef4444; font-size:13px; margin-bottom:16px; display:none; text-align:left;"></div>
+                    <div id="storeFormSuccess" style="color:#10B981; font-size:13px; margin-bottom:16px; display:none; font-weight:600; text-align:left;"></div>
+                    
+                    <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+                        <button type="button" class="btn btn-ghost" onclick="closeListStoreModal()" style="padding:12px 24px; border-radius:50px;">Cancel</button>
+                        <button type="submit" class="btn" style="padding:12px 28px; background:#111827; border-color:#111827; color:#fff; border-radius:50px; font-weight:700;">Submit Details</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Firebase SDK -->
+        <script type="module" src="js/app.js"></script>
+
+        <!-- Leaflet JS + Address Autocomplete + Map Preview -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="js/map.js"></script>
+</body>
+
+</html>
