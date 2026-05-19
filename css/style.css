@@ -1853,6 +1853,24 @@
             .calc-container,
             .app-container {
                 grid-template-columns: 1fr;
+                padding: var(--space-xl) var(--space-xl) 0 var(--space-xl);
+                gap: var(--space-xl);
+                text-align: center;
+            }
+
+            .app-container {
+                padding-top: var(--space-2xl);
+            }
+
+            .app-content {
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .store-btns {
+                justify-content: center;
             }
 
             /* Bento Grid Responsiveness */
