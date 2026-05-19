@@ -39,19 +39,7 @@
         // 4. Mobile Menu
         window.toggleMobileMenu = function () {
             const navLinks = document.querySelector('.nav-links');
-            if (navLinks.style.display === 'flex') {
-                navLinks.style.display = 'none';
-            } else {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '80px';
-                navLinks.style.left = '0';
-                navLinks.style.width = '100%';
-                navLinks.style.backgroundColor = 'var(--white)';
-                navLinks.style.padding = '20px';
-                navLinks.style.borderBottom = '1px solid var(--border)';
-            }
+            navLinks.classList.toggle('mobile-active');
         };
 
         // 5. Intersection Observer for Fade-Up Animations
